@@ -262,18 +262,9 @@
 
   // ---------- static data ----------
   var KEY_POOL = [
-    ["маяк","чайка","шторм"],
-    ["костёр","снег","волк"],
-    ["скрипка","вальс","занавес"],
-    ["сад","роса","соловей"],
-    ["карта","компас","река"],
-    ["зеркало","свеча","полночь"],
-    ["паровоз","письмо","перрон"],
-    ["якорь","парус","горизонт"],
-    ["виноград","бочка","погреб"],
-    ["колокол","снегирь","мороз"],
-    ["гармонь","частушка","каблук"],
-    ["невод","омут","русалка"]
+    "маяк","костёр","скрипка","сад","карта","зеркало","паровоз","якорь",
+    "виноград","колокол","гармонь","невод","чайка","волк","вальс","соловей",
+    "компас","свеча","перрон","парус","бочка","снегирь","частушка","омут"
   ];
   var COMPETITIONS = [
     { name:"Штанопровод", desc:"Прокатить яйцо из одной штанины в другую быстрее соперника." },
@@ -298,9 +289,9 @@
   };
   var ROLE_DESC = {
     guest:"Ты обычный гость. Твоя цель — вычислить джигитов и не спалить невесту. Ночью ты выбираешь, кого подозреваешь, и голосуешь, изгонять ли тостующего.",
-    jigit:"Ты хочешь украсть невесту. Пока живы гости, воруй их по одному. Невесту можно красть только когда обычных гостей не осталось. Ты видишь все три слова ключа, но часть из них — подделка: угадать, какие слова настоящие, тебе придётся по чужим тостам.",
+    jigit:"Ты хочешь украсть невесту. Пока живы гости, воруй их по одному. Невесту можно красть только когда обычных гостей не осталось. Ключевое слово тебе неизвестно вовсе — угадывай его по чужим тостам.",
     zhenih:"Ты ревнивый жених. Каждую ночь можешь набить морду одному человеку (кроме невесты) — тот не сможет этой ночью совершить своё действие. Если ты сам попадёшься бывшей на танец, набить морду не выйдет.",
-    nevesta:"Твоя роль открыта всем. Перед первым угаром ты сама придумываешь ключ из трёх слов. Каждый раунд ты выбираешь, кто говорит следующий тост (сама или через конкурс), запускаешь ночь, можешь дважды за игру сменить ключ на новый и решаешь исход конкурса при ничьей.",
+    nevesta:"Твоя роль открыта всем. Перед первым угаром ты сама придумываешь ключевое слово. Каждый раунд ты выбираешь, кто говорит следующий тост (сама или через конкурс), запускаешь ночь, можешь дважды за игру сменить слово на новое и решаешь исход конкурса при ничьей.",
     byvshaya:"Ты уводишь кого-то танцевать. Тот, кого ты выберешь, не сможет в эту ночь совершить своё действие.",
     fotograf:"Ты следишь за камерой. Каждое утро узнаёшь, просыпался ли выбранный тобой человек этой ночью."
   };
@@ -313,30 +304,21 @@
     }
     return a;
   }
-  function jigitWordCount(roleConfig){
-    return (roleConfig && roleConfig.jigitKeyWords==="1") ? 1 : 2;
-  }
-  var keyDraft = ["","",""];
+  var keyDraft = "";
   function fillRandomKeyInputs(){
-    var words = KEY_POOL[Math.floor(Math.random()*KEY_POOL.length)];
-    keyDraft = words.slice();
-    var i1=document.getElementById("kw1"), i2=document.getElementById("kw2"), i3=document.getElementById("kw3");
-    if(i1) i1.value = words[0];
-    if(i2) i2.value = words[1];
-    if(i3) i3.value = words[2];
+    var word = KEY_POOL[Math.floor(Math.random()*KEY_POOL.length)];
+    keyDraft = word;
+    var i1=document.getElementById("kw1");
+    if(i1) i1.value = word;
   }
   function keyInputsHtml(){
     return '<div class="keyinputs">'+
-      '<input type="text" id="kw1" placeholder="Слово 1" value="'+esc(keyDraft[0])+'"/>'+
-      '<input type="text" id="kw2" placeholder="Слово 2" value="'+esc(keyDraft[1])+'"/>'+
-      '<input type="text" id="kw3" placeholder="Слово 3" value="'+esc(keyDraft[2])+'"/>'+
+      '<input type="text" id="kw1" placeholder="Ключевое слово" value="'+esc(keyDraft)+'"/>'+
       '</div>';
   }
   function bindKeyInputs(){
-    ["kw1","kw2","kw3"].forEach(function(id, i){
-      var el = document.getElementById(id);
-      if(el) el.oninput = function(){ keyDraft[i] = el.value; };
-    });
+    var el = document.getElementById("kw1");
+    if(el) el.oninput = function(){ keyDraft = el.value; };
   }
   function initials(name){
     return (name||"?").trim().slice(0,2).toUpperCase();
@@ -545,37 +527,18 @@
       testMode: gameState && gameState.testMode || false,
       roleConfig: roleConfig || null,
       competitionsList: gameState && gameState.competitionsList || null,
-      gameLog: [{round:1, text:"Свадьба началась! Невеста готовится объявить ключ из трёх слов.", t:Date.now()}]
+      gameLog: [{round:1, text:"Свадьба началась! Невеста готовится объявить ключевое слово.", t:Date.now()}]
     });
   }
 
-  function fakeWordPool(exclude){
-    var pool = [];
-    KEY_POOL.forEach(function(triple){
-      triple.forEach(function(w){ if(pool.indexOf(w)===-1) pool.push(w); });
-    });
-    pool = shuffle(pool.filter(function(w){ return exclude.indexOf(w)===-1; }));
-    return pool;
-  }
-
-  async function applyKeyWords(words){
-    var n = jigitWordCount(gameState && gameState.roleConfig);
-    var full = words.map(function(w){ return w.trim(); });
-    var chosenIdx = shuffle([0,1,2]).slice(0, n).sort(function(a,b){return a-b});
-    var used = full.slice();
-    var decoys = fakeWordPool(full);
-    var jigitWords = full.map(function(w, i){
-      if(chosenIdx.indexOf(i)!==-1) return w;
-      var fake = decoys.length ? decoys.shift() : ("тайна-"+Math.floor(Math.random()*90+10));
-      used.push(fake);
-      return fake;
-    });
-    var keys = { full: full, jigitWords: jigitWords, jigitRealIdx: chosenIdx };
+  async function applyKeyWord(word){
+    var full = word.trim();
+    var keys = { word: full };
     var writes = [];
     Object.keys(players).forEach(function(uid){
       if(!players[uid].alive) return;
       var role = players[uid].role;
-      var key = role==="jigit" ? keys.jigitWords : keys.full;
+      var key = role==="jigit" ? null : [full];
       writes.push(db.doc("players/"+uid).update({key:key}).catch(function(){}));
     });
     await Promise.all(writes);
@@ -618,23 +581,23 @@
     await db.doc("actions/"+activeUid).set(body);
   }
 
-  async function submitInitialKey(words){
-    var keys = await applyKeyWords(words);
+  async function submitInitialKey(word){
+    var keys = await applyKeyWord(word);
     await db.doc("game/state").update({currentKeys:keys, keySet:true, phase:"pickspeaker"});
-    await appendLog("Невеста объявила ключ из трёх слов. Угар может начинаться.", 1);
+    await appendLog("Невеста объявила ключевое слово. Угар может начинаться.", 1);
   }
 
-  async function submitKeyChange(words){
+  async function submitKeyChange(word){
     var me = players[activeUid];
     var used = me.keyChangesUsed||0;
     if(used>=2) return;
-    var keys = await applyKeyWords(words);
+    var keys = await applyKeyWord(word);
     keyFormOpen = false;
     await Promise.all([
       db.doc("players/"+activeUid).update({keyChangesUsed: used+1}).catch(function(){}),
       db.doc("game/state").update({currentKeys:keys}).catch(function(){})
     ]);
-    await appendLog("Невеста сменила ключ (использовано "+(used+1)+" из 2 смен).");
+    await appendLog("Невеста сменила ключевое слово (использовано "+(used+1)+" из 2 смен).");
   }
 
   function getCompetitions(){
@@ -1030,16 +993,16 @@
   function screenKeySetup(){
     var isBride = activeUid===gameState.brideUid;
     var body = myRoleBox() + '<div class="card">'+
-      '<h2>Невеста задаёт ключ</h2>'+
-      '<p class="sub">Три слова, вокруг которых будут строиться тосты. Мирные увидят все три настоящих, джигиты — тоже три слова, но часть из них подделка.</p>';
+      '<h2>Невеста задаёт ключевое слово</h2>'+
+      '<p class="sub">Одно слово, вокруг которого будут строиться тосты. Все мирные его видят. Джигиты не знают его вовсе — им придётся угадывать по тостам.</p>';
     if(isBride){
       body += keyInputsHtml()+
         '<div class="stack" style="margin-top:10px">'+
-        '<button class="btn" id="setKeyBtn">Установить ключ и начать</button>'+
+        '<button class="btn" id="setKeyBtn">Установить слово и начать</button>'+
         '<button class="btn ghost small" id="randKeyBtn">🎲 Заполнить случайно</button>'+
         '</div>';
     } else {
-      body += '<div class="center-note">Невеста придумывает ключ…</div>';
+      body += '<div class="center-note">Невеста придумывает ключевое слово…</div>';
     }
     body += '</div>';
     render(chrome()+body);
@@ -1049,11 +1012,9 @@
     var sk = document.getElementById("setKeyBtn");
     if(sk) sk.onclick = function(){
       var w1=document.getElementById("kw1").value.trim();
-      var w2=document.getElementById("kw2").value.trim();
-      var w3=document.getElementById("kw3").value.trim();
-      if(!w1||!w2||!w3) return;
-      keyDraft = ["","",""];
-      submitInitialKey([w1,w2,w3]);
+      if(!w1) return;
+      keyDraft = "";
+      submitInitialKey(w1);
     };
   }
 
@@ -1161,7 +1122,7 @@
       } else if(!keyFormOpen){
         body += '<button class="btn secondary" id="keyChangeBtn">Сбросить ключ ('+(2-used)+' ост.)</button>';
       } else {
-        body += '<div class="miniform"><p class="sub">Впиши новые три слова ключа:</p>'+
+        body += '<div class="miniform"><p class="sub">Впиши новое ключевое слово:</p>'+
           keyInputsHtml()+
           '<div class="stack" style="margin-top:10px">'+
           '<button class="btn" id="applyKeyChangeBtn">Применить новый ключ</button>'+
@@ -1195,19 +1156,17 @@
       };
     });
     var kcb = document.getElementById("keyChangeBtn");
-    if(kcb) kcb.onclick = function(){ keyFormOpen = true; keyDraft = ["","",""]; screenNight(); };
+    if(kcb) kcb.onclick = function(){ keyFormOpen = true; keyDraft = ""; screenNight(); };
     var rk2 = document.getElementById("randKeyBtn2");
     if(rk2) rk2.onclick = fillRandomKeyInputs;
     var cancelKcb = document.getElementById("cancelKeyChangeBtn");
-    if(cancelKcb) cancelKcb.onclick = function(){ keyFormOpen = false; keyDraft = ["","",""]; screenNight(); };
+    if(cancelKcb) cancelKcb.onclick = function(){ keyFormOpen = false; keyDraft = ""; screenNight(); };
     var applyKcb = document.getElementById("applyKeyChangeBtn");
     if(applyKcb) applyKcb.onclick = function(){
       var w1=document.getElementById("kw1").value.trim();
-      var w2=document.getElementById("kw2").value.trim();
-      var w3=document.getElementById("kw3").value.trim();
-      if(!w1||!w2||!w3) return;
-      keyDraft = ["","",""];
-      submitKeyChange([w1,w2,w3]);
+      if(!w1) return;
+      keyDraft = "";
+      submitKeyChange(w1);
     };
     var frb = document.getElementById("forceResolveBtn");
     if(frb) frb.onclick = function(){ clearTimerLoop(); resolveNight(); };
@@ -1377,13 +1336,7 @@
       '</div>';
 
     body += '<div class="card"><h2>Ключ</h2>'+
-      '<p class="sub">Невеста задаёт ключ из трёх слов. Мирные видят все три настоящих, джигиты видят тоже три слова на тех же местах, но часть из них — подделка.</p>'+
-      '<div class="setting-row"><div class="lbl">Сколько слов у джигитов настоящие</div>'+
-        '<select class="mini" id="cfgJigitKey">'+
-          '<option value="2"'+(!cfg.jigitKeyWords||cfg.jigitKeyWords==="2"?" selected":"")+'>2 настоящих, 1 подделка</option>'+
-          '<option value="1"'+(cfg.jigitKeyWords==="1"?" selected":"")+'>1 настоящее, 2 подделки</option>'+
-        '</select></div>'+
-      (locked ? '<p class="sub">Применится при следующей смене ключа невестой или новой партии.</p>' : '')+
+      '<p class="sub">Невеста задаёт одно ключевое слово. Все мирные его видят, джигиты — нет, им придётся угадывать по тостам.</p>'+
       '</div>';
 
     body += '<div class="card"><h2>Конкурсы при ничьей</h2><p class="sub">Один выбирается случайно, когда голоса «изгнать/оставить» равны (и когда невеста разыгрывает тост).</p>';
@@ -1423,7 +1376,6 @@
     var cz = document.getElementById("cfgZhenih"); if(cz) cz.onchange = function(){ saveCfg({zhenih:cz.value}); };
     var cb = document.getElementById("cfgByvshaya"); if(cb) cb.onchange = function(){ saveCfg({byvshaya:cb.value}); };
     var cf = document.getElementById("cfgFotograf"); if(cf) cf.onchange = function(){ saveCfg({fotograf:cf.value}); };
-    var ck = document.getElementById("cfgJigitKey"); if(ck) ck.onchange = function(){ saveCfg({jigitKeyWords:ck.value}); };
 
     root.querySelectorAll("[data-rmcomp]").forEach(function(el){
       el.onclick = function(){
