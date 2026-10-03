@@ -1,0 +1,1533 @@
+<title>Пьяная Свадьба</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7ede0;
+    --surface:#ffffff;
+    --surface-2:#fbf5ea;
+    --text:#2a1620;
+    --text-dim:#7a5760;
+    --accent:#8c1f3f;
+    --accent-ink:#ffffff;
+    --gold:#a9781c;
+    --border:#e6d5c3;
+    --good:#3f7d4f;
+    --bad:#b23b3b;
+    --shadow: 0 10px 30px -12px rgba(60,20,30,.25);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1c1218;
+      --surface:#261821;
+      --surface-2:#2d1c27;
+      --text:#f4e7e1;
+      --text-dim:#b99aa3;
+      --accent:#e0577e;
+      --accent-ink:#1c1218;
+      --gold:#e0b84a;
+      --border:#3c2733;
+      --good:#6bc27f;
+      --bad:#f0768a;
+      --shadow: 0 10px 30px -12px rgba(0,0,0,.5);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1c1218;
+    --surface:#261821;
+    --surface-2:#2d1c27;
+    --text:#f4e7e1;
+    --text-dim:#b99aa3;
+    --accent:#e0577e;
+    --accent-ink:#1c1218;
+    --gold:#e0b84a;
+    --border:#3c2733;
+    --good:#6bc27f;
+    --bad:#f0768a;
+    --shadow: 0 10px 30px -12px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Manrope",system-ui,sans-serif;
+    padding-inline:16px;
+    padding-block:16px;
+    min-height:100%;
+  }
+  html,body{height:100%}
+  h1,h2,h3,.display{font-family:"Unbounded",system-ui,sans-serif;text-wrap:balance}
+  p{line-height:1.5}
+  button{font-family:inherit;font-size:15px;cursor:pointer;border:none}
+  input{font-family:inherit;font-size:16px}
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+
+  #app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:16px;min-height:calc(100% - 32px)}
+
+  .topbar{
+    display:flex;flex-direction:column;gap:8px;
+    padding:10px 14px;border-radius:16px;background:var(--surface);
+    border:1px solid var(--border);box-shadow:var(--shadow);
+  }
+  .topbar-row1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .topbar-row2{display:flex;gap:6px;flex-wrap:wrap}
+  .topbar .title{font-family:"Unbounded";font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;min-width:0}
+  .topbar .title .ring{font-size:16px;flex-shrink:0}
+  .topbar .title .ttext{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pill{
+    font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;
+    background:var(--surface-2);color:var(--text-dim);border:1px solid var(--border);
+    white-space:nowrap;
+  }
+  .pill.accent{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:20px;
+    padding:20px;box-shadow:var(--shadow);
+  }
+  .card h2{font-size:19px;margin:0 0 6px}
+  .card .sub{color:var(--text-dim);font-size:14px;margin:0 0 14px}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:13px 18px;border-radius:14px;font-weight:700;font-size:15px;
+    background:var(--accent);color:var(--accent-ink);width:100%;
+    transition:transform .08s ease, opacity .15s ease;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+  .btn.small{padding:9px 12px;font-size:13px;width:auto}
+  .btn.gold{background:var(--gold);color:#241708}
+
+  label{font-size:13px;font-weight:700;color:var(--text-dim);display:block;margin-bottom:6px}
+  input[type=text]{
+    width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);
+    background:var(--surface-2);color:var(--text);
+  }
+  input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+  .ptile{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    padding:12px 8px;border-radius:14px;border:2px solid var(--border);
+    background:var(--surface-2);text-align:center;position:relative;
+  }
+  .ptile.selectable{cursor:pointer}
+  .ptile.selectable:hover{border-color:var(--accent)}
+  .ptile.selected{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2))}
+  .ptile.dead{opacity:.4}
+  .ptile .avatar{
+    width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:"Unbounded";font-weight:700;font-size:15px;background:var(--accent);color:var(--accent-ink);
+  }
+  .ptile .nm{font-size:12.5px;font-weight:600;line-height:1.2;word-break:break-word}
+  .ptile .tag{font-size:10px;color:var(--gold);font-weight:700}
+  .ptile .dead-mark{position:absolute;top:4px;right:8px;font-size:11px}
+
+  .toggle-row{display:flex;gap:10px}
+  .toggle{
+    flex:1;padding:14px;border-radius:14px;border:2px solid var(--border);
+    background:var(--surface-2);text-align:center;font-weight:700;font-size:14px;color:var(--text-dim);
+  }
+  .toggle.on-yes.active{border-color:var(--good);color:var(--good);background:color-mix(in srgb, var(--good) 14%, var(--surface-2))}
+  .toggle.on-no.active{border-color:var(--bad);color:var(--bad);background:color-mix(in srgb, var(--bad) 14%, var(--surface-2))}
+
+  .keybox{
+    display:flex;gap:8px;flex-wrap:wrap;
+  }
+  .keyword{
+    background:var(--surface-2);border:1px dashed var(--gold);color:var(--gold);
+    font-weight:800;font-family:"Unbounded";font-size:13px;padding:8px 12px;border-radius:10px;
+  }
+  .hint{font-size:13px;color:var(--text-dim);margin-top:10px;line-height:1.5}
+
+  .timerwrap{display:flex;align-items:center;gap:10px}
+  .timerbar{flex:1;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border)}
+  .timerbar > div{height:100%;background:var(--accent);transition:width 1s linear}
+  .timernum{font-variant-numeric:tabular-nums;font-weight:800;font-family:"Unbounded";font-size:15px;min-width:34px;text-align:right}
+
+  .rolecard{
+    background:linear-gradient(160deg, color-mix(in srgb, var(--accent) 18%, var(--surface)), var(--surface));
+    border:1px solid var(--accent);
+  }
+  .rolecard .rolename{font-family:"Unbounded";font-size:22px;font-weight:800;color:var(--accent)}
+
+  .banner{
+    text-align:center;padding:14px;border-radius:14px;background:var(--surface-2);
+    border:1px solid var(--border);font-weight:600;font-size:14px;
+  }
+  .banner.win{background:color-mix(in srgb, var(--good) 16%, var(--surface));border-color:var(--good);color:var(--good);font-family:"Unbounded";font-size:16px}
+  .banner.lose{background:color-mix(in srgb, var(--bad) 16%, var(--surface));border-color:var(--bad);color:var(--bad);font-family:"Unbounded";font-size:16px}
+
+  .footer-actions{position:sticky;bottom:0;padding-top:6px}
+
+  .rules-list{margin:0;padding-left:18px;color:var(--text-dim);font-size:13.5px;line-height:1.7}
+  .divider{height:1px;background:var(--border);margin:14px 0}
+
+  .center-note{text-align:center;color:var(--text-dim);font-size:14px;padding:24px 10px}
+  .spin{
+    width:26px;height:26px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);
+    margin:0 auto 12px;animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .lbrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+  .lbrow:last-child{border-bottom:none}
+  .lbrow .score{font-family:"Unbounded";font-weight:700;color:var(--gold)}
+  .rolebadge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--text-dim);border:1px solid var(--border)}
+
+  .icon-btn{
+    width:32px;height:32px;border-radius:10px;background:var(--surface-2);color:var(--text-dim);
+    border:1px solid var(--border);font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .icon-btn:active{transform:scale(.95)}
+  .topbar-actions{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+  .round-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .round-tab{padding:7px 12px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--surface-2);color:var(--text-dim);border:1px solid var(--border)}
+  .round-tab.active{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+  .log-entry{padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.5}
+  .log-entry:last-child{border-bottom:none}
+
+  .testbar{
+    display:flex;gap:8px;align-items:center;padding:8px 12px;border-radius:14px;
+    background:color-mix(in srgb, var(--gold) 14%, var(--surface));border:1px dashed var(--gold);
+  }
+  .testselect{
+    flex:1;min-width:0;padding:9px 10px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface-2);color:var(--text);font-size:13px;
+  }
+
+  .setting-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+  .setting-row:last-child{border-bottom:none}
+  .setting-row .lbl{font-weight:700;font-size:14px}
+  .setting-row .sublbl{font-size:12px;color:var(--text-dim);margin-top:2px}
+  select.mini{
+    padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:13px;
+  }
+  .switch{
+    width:46px;height:27px;border-radius:99px;background:var(--border);position:relative;flex-shrink:0;border:none;padding:0;
+  }
+  .switch.on{background:var(--good)}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .15s ease}
+  .switch.on::after{left:22px}
+
+  .comp-row{display:flex;align-items:flex-start;gap:8px;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px}
+  .comp-row:last-child{border-bottom:none}
+  .comp-row .txt{flex:1;line-height:1.55}
+  .comp-row .rm{width:26px;height:26px;border-radius:8px;background:var(--surface-2);color:var(--bad);border:1px solid var(--border);flex-shrink:0}
+
+  .order-list{margin:0;padding-left:20px;color:var(--text);font-size:14px;line-height:2}
+  .order-list li b{color:var(--accent)}
+  .steplbl{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--gold);text-transform:uppercase}
+
+  .role-hidden{cursor:pointer;text-align:center}
+  .role-hidden .peek{font-family:"Unbounded";font-size:15px;font-weight:700;color:var(--accent)}
+  .keyinputs{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .miniform{margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
+  .stack{display:flex;flex-direction:column;gap:8px}
+</style>
+
+<div id="app">
+  <div class="center-note"><div class="spin"></div>Наливаем…</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyBtyyKGaWjpQzj6CI9zbyLoLoto8VPGh4w",
+    authDomain: "drunkwedding.firebaseapp.com",
+    projectId: "drunkwedding",
+    storageBucket: "drunkwedding.firebasestorage.app",
+    messagingSenderId: "1045128400166",
+    appId: "1:1045128400166:web:e9aa75a4e553b8ab4fc5e7"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  // ---------- static data ----------
+  var KEY_POOL = [
+    ["маяк","чайка","шторм"],
+    ["костёр","снег","волк"],
+    ["скрипка","вальс","занавес"],
+    ["сад","роса","соловей"],
+    ["карта","компас","река"],
+    ["зеркало","свеча","полночь"],
+    ["паровоз","письмо","перрон"],
+    ["якорь","парус","горизонт"],
+    ["виноград","бочка","погреб"],
+    ["колокол","снегирь","мороз"],
+    ["гармонь","частушка","каблук"],
+    ["невод","омут","русалка"]
+  ];
+  var COMPETITIONS = [
+    { name:"Штанопровод", desc:"Прокатить яйцо из одной штанины в другую быстрее соперника." },
+    { name:"Снайпер с подвохом", desc:"Привязать на нитку карандаш, закрепить нитку на поясе сзади и первым попасть карандашом в горлышко бутылки, стоящей позади себя." },
+    { name:"Лимонная улыбка", desc:"Съесть по дольке лимона с улыбкой, не поморщившись — кто дольше держит лицо." },
+    { name:"Дрожащее желе", desc:"Съесть порцию желе из тарелки, держа руки за спиной и орудуя только двумя зубочистками (или спичками)." },
+    { name:"Яичная дуэль", desc:"К поясу каждому участнику привязывают целлофановый пакет с сырым яйцом; раскачиваясь, нужно разбить яйцо соперника и сохранить своё целым." },
+    { name:"Папирусная мумия", desc:"В паре один игрок должен как можно быстрее с головы до ног обмотать другого рулоном туалетной бумаги, превратив в мумию." },
+    { name:"Шарикодавилки", desc:"Пара встаёт лицом друг к другу и зажимает между собой надутый воздушный шарик, стараясь лопнуть его без помощи рук." },
+    { name:"Банан без рук", desc:"Руки за спину, на коленях перед табуреткой — нужно ртом очистить и съесть неочищенный банан быстрее соперников." },
+    { name:"Огнеборец", desc:"К поясу привязывают верёвку с мокрой ватой (или спичечным коробком) на конце; не касаясь руками, нужно первым потушить стоящую перед собой свечу." },
+    { name:"Я не магл", desc:"Скрутить салфетку в трубочку, поставить и поджечь сверху — если всё получится, пепел взлетит вверх. У кого не взлетел — тот проиграл." }
+  ];
+
+  function normComp(c){
+    if(typeof c === "string") return { name:"Конкурс", desc:c };
+    return { name: (c && c.name) || "Конкурс", desc: (c && c.desc) || "" };
+  }
+  var ROLE_LABEL = {
+    guest:"Гость", jigit:"Джигит", zhenih:"Жених", nevesta:"Невеста",
+    byvshaya:"Бывшая", fotograf:"Фотограф"
+  };
+  var ROLE_DESC = {
+    guest:"Ты обычный гость. Твоя цель — вычислить джигитов и не спалить невесту. Ночью ты выбираешь, кого подозреваешь, и голосуешь, изгонять ли тостующего.",
+    jigit:"Ты хочешь украсть невесту. Пока живы гости, воруй их по одному. Невесту можно красть только когда обычных гостей не осталось. Ты видишь все три слова ключа, но часть из них — подделка: угадать, какие слова настоящие, тебе придётся по чужим тостам.",
+    zhenih:"Ты ревнивый жених. Каждую ночь можешь набить морду одному человеку (кроме невесты) — тот не сможет этой ночью совершить своё действие. Если ты сам попадёшься бывшей на танец, набить морду не выйдет.",
+    nevesta:"Твоя роль открыта всем. Перед первым угаром ты сама придумываешь ключ из трёх слов. Каждый раунд ты выбираешь, кто говорит следующий тост (сама или через конкурс), запускаешь ночь, можешь дважды за игру сменить ключ на новый и решаешь исход конкурса при ничьей.",
+    byvshaya:"Ты уводишь кого-то танцевать. Тот, кого ты выберешь, не сможет в эту ночь совершить своё действие.",
+    fotograf:"Ты следишь за камерой. Каждое утро узнаёшь, просыпался ли выбранный тобой человек этой ночью."
+  };
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
+  function jigitWordCount(roleConfig){
+    return (roleConfig && roleConfig.jigitKeyWords==="1") ? 1 : 2;
+  }
+  var keyDraft = ["","",""];
+  function fillRandomKeyInputs(){
+    var words = KEY_POOL[Math.floor(Math.random()*KEY_POOL.length)];
+    keyDraft = words.slice();
+    var i1=document.getElementById("kw1"), i2=document.getElementById("kw2"), i3=document.getElementById("kw3");
+    if(i1) i1.value = words[0];
+    if(i2) i2.value = words[1];
+    if(i3) i3.value = words[2];
+  }
+  function keyInputsHtml(){
+    return '<div class="keyinputs">'+
+      '<input type="text" id="kw1" placeholder="Слово 1" value="'+esc(keyDraft[0])+'"/>'+
+      '<input type="text" id="kw2" placeholder="Слово 2" value="'+esc(keyDraft[1])+'"/>'+
+      '<input type="text" id="kw3" placeholder="Слово 3" value="'+esc(keyDraft[2])+'"/>'+
+      '</div>';
+  }
+  function bindKeyInputs(){
+    ["kw1","kw2","kw3"].forEach(function(id, i){
+      var el = document.getElementById(id);
+      if(el) el.oninput = function(){ keyDraft[i] = el.value; };
+    });
+  }
+  function initials(name){
+    return (name||"?").trim().slice(0,2).toUpperCase();
+  }
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  var root = document.getElementById("app");
+  function render(html){ root.innerHTML = html; bindChrome(); }
+
+  function bindChrome(){
+    var ib = document.getElementById("infoBtn");
+    if(ib) ib.onclick = function(){ navOverride="info"; renderCurrent(); };
+    var sb = document.getElementById("settingsBtn");
+    if(sb) sb.onclick = function(){ navOverride="settings"; renderCurrent(); };
+    var cb2 = document.getElementById("compsBtn");
+    if(cb2) cb2.onclick = function(){ navOverride="competitions"; renderCurrent(); };
+    var lgb = document.getElementById("logBtn");
+    if(lgb) lgb.onclick = function(){ navOverride="log"; renderCurrent(); };
+    var backTop = document.getElementById("backTopBtn");
+    if(backTop) backTop.onclick = function(){ navOverride=null; renderCurrent(); };
+    root.querySelectorAll("[data-back]").forEach(function(el){
+      el.onclick = function(){ navOverride=null; renderCurrent(); };
+    });
+    var sw = document.getElementById("activeUidSelect");
+    if(sw) sw.onchange = function(){ setActiveUid(sw.value); renderCurrent(); };
+    var addBot = document.getElementById("addBotBtn");
+    if(addBot) addBot.onclick = addTestPlayer;
+    var rrb = document.getElementById("roleRevealBtn");
+    if(rrb) rrb.onclick = toggleRoleReveal;
+  }
+
+  var roleRevealed = false, roleRevealTimer = null;
+  function toggleRoleReveal(){
+    if(roleRevealed) return;
+    roleRevealed = true;
+    clearTimeout(roleRevealTimer);
+    roleRevealTimer = setTimeout(function(){ roleRevealed=false; renderCurrent(); }, 8000);
+    renderCurrent();
+  }
+
+  // ---------- boot ----------
+  var db=null, myUid=null, activeUid=null, navOverride=null, resetArmed=false;
+  var gameState=null, players={}, actions={};
+  var keyFormOpen=false, speakerCompeteTask=null, logRoundSel=null;
+  var unsubs=[];
+
+  function setActiveUid(uid){
+    activeUid = uid;
+    try{ sessionStorage.setItem("svadba_activeUid", uid); }catch(e){}
+  }
+
+  function renderCurrent(){
+    if(navOverride==="settings"){ screenSettings(); return; }
+    if(navOverride==="info"){ screenInfo(); return; }
+    if(navOverride==="competitions"){ screenCompList(); return; }
+    if(navOverride==="log"){ screenLog(); return; }
+    draw();
+  }
+
+  function centerMsg(text){
+    render('<div class="center-note"><div class="spin"></div>'+esc(text)+'</div>');
+  }
+
+  async function boot(){
+    try{
+      db = firebase.firestore();
+      myUid = await new Promise(function(resolve, reject){
+        var timeout = setTimeout(function(){ reject(new Error("auth timeout")); }, 15000);
+        firebase.auth().onAuthStateChanged(function(u){
+          if(u){ clearTimeout(timeout); resolve(u.uid); }
+        }, function(err){ clearTimeout(timeout); reject(err); });
+        firebase.auth().signInAnonymously().catch(function(err){ clearTimeout(timeout); reject(err); });
+      });
+    }catch(e){
+      render(
+        '<div class="topbar"><div class="title"><span class="ring">💍</span> Пьяная Свадьба</div></div>'+
+        '<div class="card"><h2>Не получилось подключиться</h2>'+
+        '<p class="sub">Проверь интернет-соединение и обнови страницу. Если не поможет — попробуй другой браузер.</p></div>'
+      );
+      return;
+    }
+
+    activeUid = myUid;
+    try{
+      var saved = sessionStorage.getItem("svadba_activeUid");
+      if(saved) activeUid = saved;
+    }catch(e){}
+
+    subscribeAll();
+  }
+
+  function subscribeAll(){
+    unsubs.push(db.doc("game/state").onSnapshot(function(snap){
+      gameState = snap.exists ? snap.data() : null;
+      renderCurrent();
+    }, function(){ }));
+
+    unsubs.push(db.collection("players").onSnapshot(function(qs){
+      var m = {};
+      qs.docs.forEach(function(d){ m[d.id] = d.data(); });
+      players = m;
+      renderCurrent();
+    }, function(){ }));
+
+    unsubs.push(db.collection("actions").onSnapshot(function(qs){
+      var m = {};
+      qs.docs.forEach(function(d){ m[d.id] = d.data(); });
+      actions = m;
+      renderCurrent();
+    }, function(){ }));
+  }
+
+  async function patchGameState(patch){
+    var snap = await db.doc("game/state").get();
+    var cur = snap.exists ? snap.data() : {};
+    await db.doc("game/state").set(Object.assign({}, cur, patch));
+  }
+
+  async function appendLog(text, roundOverride){
+    var snap = await db.doc("game/state").get();
+    var cur = snap.exists ? snap.data() : {};
+    var log = (cur.gameLog || []).slice();
+    log.push({ round: roundOverride!=null ? roundOverride : (cur.round||0), text: text, t: Date.now() });
+    if(log.length > 400) log = log.slice(log.length-400);
+    await db.doc("game/state").set(Object.assign({}, cur, {gameLog: log}));
+  }
+
+  async function addTestPlayer(){
+    var id = "bot_"+Math.random().toString(36).slice(2,8);
+    setActiveUid(id);
+    renderCurrent();
+  }
+
+  // ---------- write helpers ----------
+  async function joinGame(name){
+    await db.doc("players/"+activeUid).set({
+      name: name, alive:true, role:null, key:null,
+      joinedAt: (players[activeUid] && players[activeUid].joinedAt) || Date.now(),
+      suspicionScore: 0
+    });
+  }
+
+  function countByRoleTarget(n, roleConfig){
+    roleConfig = roleConfig || {};
+    var jigitCount = roleConfig.jigitCount==="2" ? 2 : roleConfig.jigitCount==="3" ? 3 : 1;
+    var hasZhenih = roleConfig.zhenih==="off" ? false : true;
+    var hasByvshaya = roleConfig.byvshaya==="on" ? true : false;
+    var hasFotograf = roleConfig.fotograf==="on" ? true : false;
+    var fixed = 1 + jigitCount + (hasZhenih?1:0) + (hasByvshaya?1:0) + (hasFotograf?1:0); // nevesta+jigits+...
+    return { jigitCount:jigitCount, hasZhenih:hasZhenih, hasByvshaya:hasByvshaya, hasFotograf:hasFotograf, guests: Math.max(0, n-fixed) };
+  }
+
+  async function startGame(){
+    var uids = Object.keys(players);
+    var n = uids.length;
+    if(n < 4) return alert2("Нужно минимум 4 игрока.");
+    var roleConfig = gameState && gameState.roleConfig;
+    var cfg = countByRoleTarget(n, roleConfig);
+
+    var forcedBride = roleConfig && roleConfig.brideUid;
+    if(forcedBride && !players[forcedBride]) forcedBride = null;
+    var order = forcedBride
+      ? [forcedBride].concat(shuffle(uids.filter(function(u){ return u!==forcedBride; })))
+      : shuffle(uids);
+
+    var roleSeq = ["nevesta"];
+    if(cfg.hasZhenih) roleSeq.push("zhenih");
+    for(var i=0;i<cfg.jigitCount;i++) roleSeq.push("jigit");
+    if(cfg.hasByvshaya) roleSeq.push("byvshaya");
+    if(cfg.hasFotograf) roleSeq.push("fotograf");
+    while(roleSeq.length < n) roleSeq.push("guest");
+
+    var brideUid=null, zhenihUid=null, byvshayaUid=null, fotografUid=null, jigits=[];
+
+    var writes = [];
+    for(var idx=0; idx<order.length; idx++){
+      var uid = order[idx];
+      var role = roleSeq[idx];
+      if(role==="nevesta") brideUid = uid;
+      if(role==="zhenih") zhenihUid = uid;
+      if(role==="byvshaya") byvshayaUid = uid;
+      if(role==="fotograf") fotografUid = uid;
+      if(role==="jigit") jigits.push(uid);
+      writes.push(db.doc("players/"+uid).update({
+        role: role, alive: true, key: null, suspicionScore: 0,
+        keyChangesUsed: role==="nevesta" ? 0 : undefined
+      }).catch(function(){}));
+    }
+    await Promise.all(writes);
+
+    var guestsInitial = roleSeq.filter(function(r){return r==="guest"}).length;
+
+    await db.doc("game/state").set({
+      started:true, phase:"keysetup", round:1,
+      speakerUid: null, keySet:false,
+      mainJigitUid: jigits[0]||null, jigit2Uid: jigits[1]||null, jigit3Uid: jigits[2]||null,
+      allJigits: jigits, jigitSuspicionTotals: {},
+      zhenihUid: zhenihUid, byvshayaUid: byvshayaUid, fotografUid: fotografUid, brideUid: brideUid,
+      guestsAliveInitial: guestsInitial, guestsAliveTotal: guestsInitial,
+      finalNight:false, winner:null,
+      currentKeys: null,
+      tieCompetition: null, lastSummary: null, phaseEndsAt: null,
+      testMode: gameState && gameState.testMode || false,
+      roleConfig: roleConfig || null,
+      competitionsList: gameState && gameState.competitionsList || null,
+      gameLog: [{round:1, text:"Свадьба началась! Невеста готовится объявить ключ из трёх слов.", t:Date.now()}]
+    });
+  }
+
+  function fakeWordPool(exclude){
+    var pool = [];
+    KEY_POOL.forEach(function(triple){
+      triple.forEach(function(w){ if(pool.indexOf(w)===-1) pool.push(w); });
+    });
+    pool = shuffle(pool.filter(function(w){ return exclude.indexOf(w)===-1; }));
+    return pool;
+  }
+
+  async function applyKeyWords(words){
+    var n = jigitWordCount(gameState && gameState.roleConfig);
+    var full = words.map(function(w){ return w.trim(); });
+    var chosenIdx = shuffle([0,1,2]).slice(0, n).sort(function(a,b){return a-b});
+    var used = full.slice();
+    var decoys = fakeWordPool(full);
+    var jigitWords = full.map(function(w, i){
+      if(chosenIdx.indexOf(i)!==-1) return w;
+      var fake = decoys.length ? decoys.shift() : ("тайна-"+Math.floor(Math.random()*90+10));
+      used.push(fake);
+      return fake;
+    });
+    var keys = { full: full, jigitWords: jigitWords, jigitRealIdx: chosenIdx };
+    var writes = [];
+    Object.keys(players).forEach(function(uid){
+      if(!players[uid].alive) return;
+      var role = players[uid].role;
+      var key = role==="jigit" ? keys.jigitWords : keys.full;
+      writes.push(db.doc("players/"+uid).update({key:key}).catch(function(){}));
+    });
+    await Promise.all(writes);
+    return keys;
+  }
+
+  async function resetGame(){
+    var pSnap = await db.collection("players").get();
+    var aSnap = await db.collection("actions").get();
+    var writes = [];
+    pSnap.docs.forEach(function(d){ writes.push(db.doc("players/"+d.id).delete()); });
+    aSnap.docs.forEach(function(d){ writes.push(db.doc("actions/"+d.id).delete()); });
+    await Promise.all(writes);
+    await patchGameState({
+      started:false, phase:null, round:0, speakerUid:null, keySet:false,
+      mainJigitUid:null, jigit2Uid:null, jigit3Uid:null, allJigits:null, jigitSuspicionTotals:null,
+      zhenihUid:null, byvshayaUid:null, fotografUid:null, brideUid:null,
+      guestsAliveInitial:0, guestsAliveTotal:0, finalNight:false, winner:null, currentKeys:null,
+      tieCompetition:null, lastSummary:null, phaseEndsAt:null, gameLog:[]
+    });
+    resetArmed = false;
+    keyFormOpen = false;
+    speakerCompeteTask = null;
+    logRoundSel = null;
+    setActiveUid(myUid);
+    navOverride = null;
+    renderCurrent();
+  }
+
+  async function beginNight(){
+    keyFormOpen = false;
+    await db.doc("game/state").update({
+      phase:"night", phaseEndsAt: Date.now() + 30000, resolvingLock:false
+    });
+  }
+
+  async function submitAction(target, exileVote){
+    var body = { round: gameState.round, target: target||null };
+    if(exileVote!==undefined) body.exileVote = exileVote;
+    await db.doc("actions/"+activeUid).set(body);
+  }
+
+  async function submitInitialKey(words){
+    var keys = await applyKeyWords(words);
+    await db.doc("game/state").update({currentKeys:keys, keySet:true, phase:"pickspeaker"});
+    await appendLog("Невеста объявила ключ из трёх слов. Угар может начинаться.", 1);
+  }
+
+  async function submitKeyChange(words){
+    var me = players[activeUid];
+    var used = me.keyChangesUsed||0;
+    if(used>=2) return;
+    var keys = await applyKeyWords(words);
+    keyFormOpen = false;
+    await Promise.all([
+      db.doc("players/"+activeUid).update({keyChangesUsed: used+1}).catch(function(){}),
+      db.doc("game/state").update({currentKeys:keys}).catch(function(){})
+    ]);
+    await appendLog("Невеста сменила ключ (использовано "+(used+1)+" из 2 смен).");
+  }
+
+  function getCompetitions(){
+    return (gameState && gameState.competitionsList && gameState.competitionsList.length) ? gameState.competitionsList : COMPETITIONS;
+  }
+
+  async function resolveNight(){
+    var round = gameState.round;
+    try{
+      await db.runTransaction(function(tx){
+        var ref = db.doc("game/state");
+        return tx.get(ref).then(function(snap){
+          var cur = snap.exists ? snap.data() : {};
+          if(cur.phase!=="night" || cur.round!==round || cur.resolvingLock) throw "ALREADY_RESOLVED";
+          tx.update(ref, {resolvingLock:true});
+        });
+      });
+    }catch(e){ return; }
+    var alive = Object.keys(players).filter(function(u){return players[u].alive});
+    function actOf(uid){
+      var a = actions[uid];
+      return (a && a.round===round) ? a : null;
+    }
+
+    // Бывшая и жених оба блокируют ночные действия (уводит танцевать / бьёт морду).
+    // Если они нацелились друг на друга взаимно — блоки аннулируют друг друга.
+    var byvshayaUid = gameState.byvshayaUid;
+    var zhenihUid = gameState.zhenihUid;
+    var bTarget = null, zTarget = null;
+    if(byvshayaUid && players[byvshayaUid] && players[byvshayaUid].alive){
+      var ab = actOf(byvshayaUid);
+      if(ab && ab.target) bTarget = ab.target;
+    }
+    if(zhenihUid && players[zhenihUid] && players[zhenihUid].alive){
+      var az = actOf(zhenihUid);
+      if(az && az.target && az.target!==gameState.brideUid) zTarget = az.target;
+    }
+    var zhenihNullified = bTarget===zhenihUid;
+    var byvshayaNullified = zTarget===byvshayaUid;
+    var blockedSet = [];
+    if(bTarget && !byvshayaNullified) blockedSet.push(bTarget);
+    if(zTarget && !zhenihNullified) blockedSet.push(zTarget);
+    function isBlocked(uid){ return blockedSet.indexOf(uid)!==-1; }
+
+    var mainJigitUid = gameState.mainJigitUid;
+    var stealTarget = null;
+    if(mainJigitUid && players[mainJigitUid] && players[mainJigitUid].alive && !isBlocked(mainJigitUid)){
+      var aj = actOf(mainJigitUid);
+      if(aj && aj.target){
+        var validBride = aj.target===gameState.brideUid && gameState.guestsAliveTotal===0;
+        var validOther = aj.target!==gameState.brideUid;
+        if(validBride || validOther) stealTarget = aj.target;
+      }
+    }
+
+    var summary = { round: round, stolen:null, exiled:null, tie:false, brideStolen:false };
+    var writes = [];
+
+    if(stealTarget){
+      if(stealTarget===gameState.brideUid){
+        summary.brideStolen = true;
+      } else {
+        writes.push(db.doc("players/"+stealTarget).update({alive:false}));
+        summary.stolen = stealTarget;
+      }
+    }
+
+    var fotografUid = gameState.fotografUid;
+    if(fotografUid && players[fotografUid] && players[fotografUid].alive && !isBlocked(fotografUid)){
+      var af = actOf(fotografUid);
+      if(af && af.target){
+        var targetActed = false;
+        var ta = actOf(af.target);
+        var tRole = players[af.target] ? players[af.target].role : null;
+        var isActiveRole = tRole==="jigit"||tRole==="zhenih"||tRole==="byvshaya"||tRole==="fotograf";
+        var tIsMain = af.target===mainJigitUid;
+        var tBlocked = isBlocked(af.target);
+        if(isActiveRole && ta && ta.target && !tBlocked && (tRole!=="jigit" || tIsMain)) targetActed = true;
+        writes.push(db.doc("players/"+fotografUid).update({
+          lastPhotoResult:{round:round, target:af.target, woke:targetActed}
+        }));
+      }
+    }
+
+    var exile=0, keep=0;
+    alive.forEach(function(uid){
+      if(players[uid].role!=="guest") return;
+      var av = actOf(uid);
+      if(av && av.exileVote==="exile") exile++;
+      else if(av && av.exileVote==="keep") keep++;
+    });
+
+    var speaker = gameState.speakerUid;
+    var newFinalNight = gameState.finalNight;
+    var winner = null;
+    var tieCompetition = null;
+
+    if(!summary.brideStolen){
+      if(exile>0 || keep>0){
+        if(exile===keep){
+          var others = alive.filter(function(u){return u!==speaker});
+          var opponent = others.length ? shuffle(others)[0] : speaker;
+          var compList = getCompetitions();
+          tieCompetition = { active:true, a:speaker, b:opponent, task: normComp(compList[Math.floor(Math.random()*compList.length)]) };
+          summary.tie = true;
+        } else if(exile>keep){
+          writes.push(db.doc("players/"+speaker).update({alive:false}));
+          summary.exiled = speaker;
+        }
+      }
+    }
+
+    var jigitSuspicionDelta = {};
+    alive.forEach(function(uid){
+      if(players[uid].role!=="guest") return;
+      var av = actOf(uid);
+      if(av && av.target){
+        var guessedRole = players[av.target] ? players[av.target].role : null;
+        if(guessedRole==="jigit"){
+          var patchObj = { suspicionScore:(players[uid].suspicionScore||0)+1 };
+          if(players[uid].firstCorrectRound==null) patchObj.firstCorrectRound = round;
+          writes.push(db.doc("players/"+uid).update(patchObj));
+          jigitSuspicionDelta[av.target] = (jigitSuspicionDelta[av.target]||0)+1;
+        }
+      }
+    });
+
+    await Promise.all(writes);
+
+    // recompute alive sets post-writes for guests count / win checks
+    var stillAlive = {};
+    Object.keys(players).forEach(function(u){ stillAlive[u]=players[u].alive; });
+    if(summary.stolen) stillAlive[summary.stolen]=false;
+    if(summary.exiled) stillAlive[summary.exiled]=false;
+
+    var guestsLeft = Object.keys(players).filter(function(u){
+      return players[u].role==="guest" && stillAlive[u]!==false;
+    }).length;
+
+    var jigitsLeft = (gameState.allJigits||[gameState.mainJigitUid,gameState.jigit2Uid].filter(Boolean)).filter(function(u){
+      return u && stillAlive[u]!==false;
+    });
+    var newMainJigit = jigitsLeft[0] || null;
+
+    if(summary.brideStolen){
+      winner = "jigits";
+    } else if(jigitsLeft.length===0){
+      winner = "guests";
+    }
+
+    var jigitSuspicionTotals = Object.assign({}, gameState.jigitSuspicionTotals||{});
+    Object.keys(jigitSuspicionDelta).forEach(function(u){
+      jigitSuspicionTotals[u] = (jigitSuspicionTotals[u]||0) + jigitSuspicionDelta[u];
+    });
+
+    var patch = {
+      lastSummary: summary,
+      guestsAliveTotal: guestsLeft,
+      mainJigitUid: newMainJigit,
+      tieCompetition: tieCompetition,
+      jigitSuspicionTotals: jigitSuspicionTotals,
+      resolvingLock: false
+    };
+
+    if(winner){
+      patch.winner = winner;
+      patch.phase = "ended";
+    } else if(tieCompetition){
+      patch.phase = "competition";
+    } else {
+      patch.round = round+1;
+      patch.phase = "morning";
+      patch.finalNight = guestsLeft===0;
+    }
+
+    var logLines = [];
+    if(summary.brideStolen) logLines.push("Невесту похитили прямо из-под венца! Джигиты побеждают.");
+    var vanishedUids = [];
+    if(summary.stolen) vanishedUids.push(summary.stolen);
+    if(summary.exiled && vanishedUids.indexOf(summary.exiled)===-1) vanishedUids.push(summary.exiled);
+    vanishedUids.forEach(function(uid){
+      var role = players[uid] ? ROLE_LABEL[players[uid].role] : "?";
+      logLines.push((players[uid]?players[uid].name:"Кто-то")+" этой ночью исчез(ла) со свадьбы и больше не появится. Роль: "+role+".");
+    });
+    if(summary.tie) logLines.push("Голоса разделились поровну — судьбу тостующего решит конкурс.");
+    if(!logLines.length) logLines.push("Этой ночью ничего заметного не произошло.");
+    if(winner) logLines.push(winner==="guests" ? "Гости побеждают — все джигиты изгнаны!" : "Джигиты похитили невесту и победили.");
+
+    await db.doc("game/state").update(patch);
+    await appendLog(logLines.join(" "), round);
+  }
+
+  async function resolveCompetition(loserUid){
+    var winner = null;
+    var roundForLog = gameState.round;
+    await db.doc("players/"+loserUid).update({alive:false});
+    var stillAlive = {};
+    Object.keys(players).forEach(function(u){ stillAlive[u]=players[u].alive; });
+    stillAlive[loserUid]=false;
+
+    var jigitsLeft = (gameState.allJigits||[gameState.mainJigitUid,gameState.jigit2Uid].filter(Boolean)).filter(function(u){
+      return u && stillAlive[u]!==false;
+    });
+    var newMainJigit = jigitsLeft[0] || null;
+    if(jigitsLeft.length===0) winner = "guests";
+
+    var guestsLeft = Object.keys(players).filter(function(u){
+      return players[u].role==="guest" && stillAlive[u]!==false;
+    }).length;
+
+    var patch = { mainJigitUid:newMainJigit, guestsAliveTotal:guestsLeft, tieCompetition:null };
+    if(winner){
+      patch.winner=winner; patch.phase="ended";
+    } else {
+      patch.round = gameState.round+1;
+      patch.phase = "morning";
+      patch.finalNight = guestsLeft===0;
+      patch.lastSummary = Object.assign({}, gameState.lastSummary, {exiled: loserUid, tie:false});
+    }
+    await db.doc("game/state").update(patch);
+    var loserRole = players[loserUid] ? ROLE_LABEL[players[loserUid].role] : "?";
+    var compLog = (players[loserUid]?players[loserUid].name:"Игрок")+" проиграл(а) конкурс при ничьей и выбывает. Его/её роль: "+loserRole+".";
+    if(winner) compLog += " Гости побеждают — все джигиты изгнаны!";
+    await appendLog(compLog, roundForLog);
+  }
+
+  async function nextRound(){
+    speakerCompeteTask = null;
+    await db.doc("game/state").update({ phase:"pickspeaker", speakerUid:null });
+  }
+
+  async function setSpeaker(uid){
+    speakerCompeteTask = null;
+    await db.doc("game/state").update({ phase:"toast", speakerUid: uid });
+    var nm = players[uid] ? players[uid].name : "Кто-то";
+    await appendLog("Тост в этом раунде говорит "+nm+".");
+  }
+
+  function alert2(msg){
+    render(root.innerHTML + '<div class="banner" style="margin-top:10px">'+esc(msg)+'</div>');
+  }
+
+  // ---------- rendering per screen ----------
+  var timerInterval=null;
+  function clearTimerLoop(){ if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } }
+
+  function topbar(){
+    var phaseLabel = {
+      lobby:"Сбор гостей", keysetup:"Ключ", pickspeaker:"Тост?", toast:"Тост", night:"Угар", morning:"Утро",
+      competition:"Конкурс", ended:"Финал"
+    }[gameState ? gameState.phase : "lobby"] || "";
+    var roundInfo = (gameState && gameState.started) ? ("Раунд "+gameState.round) : "";
+    var me = players[activeUid];
+    var showLog = !!(gameState && gameState.started && ((me && !me.alive) || gameState.phase==="ended"));
+    var actions = navOverride
+      ? '<button class="icon-btn" id="backTopBtn" title="Назад к игре">←</button>'
+      : (
+        (showLog ? '<button class="icon-btn" id="logBtn" title="Лог игры">📜</button>' : '')+
+        '<button class="icon-btn" id="compsBtn" title="Конкурсы">🎲</button>'+
+        '<button class="icon-btn" id="infoBtn" title="Правила">?</button>'+
+        '<button class="icon-btn" id="settingsBtn" title="Настройки">⚙</button>'
+      );
+    return '<div class="topbar">'+
+      '<div class="topbar-row1"><div class="title"><span class="ring">💍</span><span class="ttext">Пьяная Свадьба</span></div>'+
+      '<div class="topbar-actions">'+actions+'</div></div>'+
+      (!navOverride && (roundInfo||phaseLabel) ? ('<div class="topbar-row2">'+
+        (roundInfo?'<span class="pill">'+roundInfo+'</span>':'')+
+        (phaseLabel?'<span class="pill accent">'+phaseLabel+'</span>':'')+
+        '</div>') : '')+
+      '</div>';
+  }
+
+  function testBar(){
+    var ids = Object.keys(players);
+    var opts = ids.map(function(uid){
+      var p = players[uid];
+      var lbl = (p.name||uid.slice(0,6)) + (uid===myUid?" (ты)":"");
+      return '<option value="'+uid+'"'+(uid===activeUid?' selected':'')+'>'+esc(lbl)+'</option>';
+    });
+    if(ids.indexOf(activeUid)===-1){
+      opts.push('<option value="'+activeUid+'" selected>новый игрок…</option>');
+    }
+    var showAdd = !(gameState && gameState.started);
+    return '<div class="testbar">'+
+      '<span class="pill" style="background:var(--gold);color:#241708;border-color:transparent">🧪 Тест</span>'+
+      '<select id="activeUidSelect" class="testselect">'+opts.join("")+'</select>'+
+      (showAdd ? '<button class="btn small secondary" id="addBotBtn">+ игрок</button>' : '')+
+      '</div>';
+  }
+
+  function chrome(){
+    return topbar() + ((gameState && gameState.testMode) ? testBar() : "");
+  }
+
+  function myRoleBox(){
+    var me = players[activeUid];
+    if(!me || !me.role) return "";
+    if(!roleRevealed){
+      return '<div class="card rolecard role-hidden" id="roleRevealBtn">'+
+        '<div class="sub" style="margin-bottom:2px">Твоя роль скрыта</div>'+
+        '<div class="peek">👀 Тапни, чтобы посмотреть</div>'+
+        '<p class="hint" style="margin-bottom:0">Покажется на 8 секунд — успей, пока соседи не видят.</p>'+
+        '</div>';
+    }
+    var key = me.key;
+    return '<div class="card rolecard">'+
+      '<div class="sub" style="margin-bottom:2px">Твоя роль</div>'+
+      '<div class="rolename">'+esc(ROLE_LABEL[me.role])+'</div>'+
+      '<p class="hint">'+esc(ROLE_DESC[me.role])+'</p>'+
+      (key ? '<div class="keybox" style="margin-top:12px">'+key.map(function(w){return '<span class="keyword">'+esc(w)+'</span>'}).join("")+'</div>' : '')+
+      '</div>';
+  }
+
+  function playerGrid(opts){
+    // opts: {selectable, selectedUid, onSelectAttr, excludeSelf, excludeDead, excludeUid}
+    var ids = Object.keys(players);
+    var html = '<div class="grid">';
+    ids.forEach(function(uid){
+      var p = players[uid];
+      var disabled = opts.excludeUid===uid || (opts.excludeDead && !p.alive);
+      var cls = "ptile" + (opts.selectable && !disabled ? " selectable" : "") +
+                (opts.selectedUid===uid ? " selected" : "") + (!p.alive ? " dead":"");
+      var isBride = gameState && gameState.brideUid===uid;
+      html += '<div class="'+cls+'" '+(opts.selectable && !disabled ? 'data-pick="'+uid+'"':'')+'>'+
+        '<div class="avatar">'+esc(initials(p.name))+'</div>'+
+        '<div class="nm">'+esc(p.name||"?")+'</div>'+
+        (isBride ? '<div class="tag">невеста</div>' : '') +
+        (!p.alive ? '<div class="tag" style="color:var(--bad)">Выбыл'+(p.role?' · '+esc(ROLE_LABEL[p.role]||"?"):'')+'</div>' : '') +
+        (!p.alive ? '<div class="dead-mark">🥀</div>' : '') +
+        '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function screenLobby(){
+    var me = players[activeUid];
+    var joined = !!me;
+    var count = Object.keys(players).length;
+    var body =
+      '<div class="card">'+
+      '<h2>Сбор гостей</h2>'+
+      '<p class="sub">Позовите всех — минимум 4 человека. Игроков сейчас: '+count+'.</p>'+
+      (joined ? '' :
+        '<label for="nm">Как тебя записать в приглашённые?</label>'+
+        '<input type="text" id="nm" placeholder="Имя"/>'+
+        '<div style="height:10px"></div>'+
+        '<button class="btn" id="joinBtn">Занять место за столом</button>'
+      ) +
+      (joined ?
+        '<div class="banner">Ты за столом как <b>'+esc(me.name)+'</b>. Ждём остальных гостей.</div>'
+      : '') +
+      '</div>' +
+      (joined ? '<div class="card"><h2>Список гостей</h2>'+playerGrid({})+'</div>' : '') +
+      (joined ? '<button class="btn gold" id="startBtn">Начать свадьбу</button>' : '') +
+      '<div class="card"><h3 style="margin-top:0">Правила коротко</h3><ul class="rules-list">'+
+      '<li>Джигиты хотят украсть невесту — сначала им нужно выкрасть всех обычных гостей.</li>'+
+      '<li>Жених может набить морду одному человеку (не невесте) за ночь — тот не сможет подействовать.</li>'+
+      '<li>Невеста сама придумывает ключ, выбирает, кто говорит тост, ведёт угар и может сменить ключ.</li>'+
+      '<li>Мирные изгоняют джигитов голосованием после тоста.</li>'+
+      '</ul></div>';
+    render(chrome()+body);
+    var jb = document.getElementById("joinBtn");
+    if(jb) jb.onclick = function(){
+      var v = document.getElementById("nm").value.trim();
+      if(!v) return;
+      joinGame(v);
+    };
+    var sb = document.getElementById("startBtn");
+    if(sb) sb.onclick = startGame;
+  }
+
+  function screenToast(){
+    var speaker = players[gameState.speakerUid];
+    var isBride = activeUid===gameState.brideUid;
+    var body =
+      myRoleBox() +
+      '<div class="card">'+
+      '<h2>Слово держит '+esc(speaker?speaker.name:"?")+'</h2>'+
+      '<p class="sub">Тост должен раскрывать общий ключ — но не выдавать, что это он. Все остальные сейчас смотрят в свои телефоны.</p>'+
+      (gameState.finalNight ? '<div class="banner" style="border-color:var(--bad);color:var(--bad)">Обычных гостей не осталось. Следующая ночь решающая — невеста теперь доступна для кражи.</div>' : '') +
+      '</div>';
+    if(isBride){
+      body += '<button class="btn" id="beginNightBtn">Начать угар (ночь)</button>';
+    } else {
+      body += '<div class="center-note">Ждём, пока невеста начнёт угар…</div>';
+    }
+    render(chrome()+body);
+    var b = document.getElementById("beginNightBtn");
+    if(b) b.onclick = beginNight;
+  }
+
+  function screenKeySetup(){
+    var isBride = activeUid===gameState.brideUid;
+    var body = myRoleBox() + '<div class="card">'+
+      '<h2>Невеста задаёт ключ</h2>'+
+      '<p class="sub">Три слова, вокруг которых будут строиться тосты. Мирные увидят все три настоящих, джигиты — тоже три слова, но часть из них подделка.</p>';
+    if(isBride){
+      body += keyInputsHtml()+
+        '<div class="stack" style="margin-top:10px">'+
+        '<button class="btn" id="setKeyBtn">Установить ключ и начать</button>'+
+        '<button class="btn ghost small" id="randKeyBtn">🎲 Заполнить случайно</button>'+
+        '</div>';
+    } else {
+      body += '<div class="center-note">Невеста придумывает ключ…</div>';
+    }
+    body += '</div>';
+    render(chrome()+body);
+    bindKeyInputs();
+    var rk = document.getElementById("randKeyBtn");
+    if(rk) rk.onclick = fillRandomKeyInputs;
+    var sk = document.getElementById("setKeyBtn");
+    if(sk) sk.onclick = function(){
+      var w1=document.getElementById("kw1").value.trim();
+      var w2=document.getElementById("kw2").value.trim();
+      var w3=document.getElementById("kw3").value.trim();
+      if(!w1||!w2||!w3) return;
+      keyDraft = ["","",""];
+      submitInitialKey([w1,w2,w3]);
+    };
+  }
+
+  function screenPickSpeaker(){
+    var isBride = activeUid===gameState.brideUid;
+    var alivePlayers = Object.keys(players).filter(function(u){ return players[u].alive; });
+    var body = myRoleBox() + '<div class="card"><h2>Кто говорит следующий тост?</h2>';
+    if(isBride){
+      body += '<p class="sub">Выбери сама (по итогам обсуждения за столом) или разыграй конкурсом.</p>'+
+        playerGrid({selectable:true, excludeDead:true});
+      if(speakerCompeteTask){
+        var spTask = normComp(speakerCompeteTask);
+        body += '<div class="miniform"><p class="sub" style="margin-bottom:4px"><b>Конкурс «'+esc(spTask.name)+'»:</b> '+esc(spTask.desc)+'</p>'+
+          '<p class="sub">Кто проиграл — тот и говорит тост. Тапни по нему выше.</p></div>';
+      } else {
+        body += '<div style="height:10px"></div><button class="btn secondary" id="competeSpeakerBtn">🎲 Разыграть тост конкурсом</button>';
+      }
+    } else {
+      body += '<div class="center-note">Невеста выбирает, кто скажет тост…</div>';
+    }
+    body += '</div>';
+    render(chrome()+body);
+    root.querySelectorAll("[data-pick]").forEach(function(el){
+      el.onclick = function(){ setSpeaker(el.getAttribute("data-pick")); };
+    });
+    var cs = document.getElementById("competeSpeakerBtn");
+    if(cs) cs.onclick = function(){
+      var list = getCompetitions();
+      speakerCompeteTask = normComp(list[Math.floor(Math.random()*list.length)]);
+      screenPickSpeaker();
+    };
+  }
+
+  function screenCompList(){
+    var comps = getCompetitions();
+    var body = '<div class="card"><h2>Конкурсы</h2>'+
+      '<p class="sub">Разыгрываются при ничьей на голосовании и когда невеста выбирает, кто скажет тост.</p>'+
+      comps.map(function(c){ var nc=normComp(c); return '<div class="comp-row"><div class="txt"><b>'+esc(nc.name)+'</b><br>'+esc(nc.desc)+'</div></div>'; }).join("")+
+      '</div>';
+    render(topbar()+body);
+  }
+
+  function screenLog(){
+    var log = (gameState && gameState.gameLog) || [];
+    var rounds = [];
+    log.forEach(function(e){ if(rounds.indexOf(e.round)===-1) rounds.push(e.round); });
+    rounds.sort(function(a,b){return a-b});
+    if(!rounds.length){
+      render(topbar()+'<div class="card"><h2>Лог игры</h2><p class="sub">Пока ничего не произошло.</p></div>');
+      return;
+    }
+    if(logRoundSel==null || rounds.indexOf(logRoundSel)===-1) logRoundSel = rounds[rounds.length-1];
+    var entries = log.filter(function(e){ return e.round===logRoundSel; });
+    var body = '<div class="card"><h2>Лог игры</h2>'+
+      '<p class="sub">Доступен тем, кто уже выбыл из игры, — можно пролистать события по раундам.</p>'+
+      '<div class="round-tabs">'+rounds.map(function(r){
+        return '<button class="round-tab'+(r===logRoundSel?' active':'')+'" data-logr="'+r+'">Раунд '+r+'</button>';
+      }).join("")+'</div>'+
+      (entries.length ? entries.map(function(e){ return '<div class="log-entry">'+esc(e.text)+'</div>'; }).join("") : '<p class="sub">Нет событий в этом раунде.</p>')+
+      '</div>';
+    render(topbar()+body);
+    root.querySelectorAll("[data-logr]").forEach(function(el){
+      el.onclick = function(){ logRoundSel = parseInt(el.getAttribute("data-logr"),10); screenLog(); };
+    });
+  }
+
+  function screenNight(){
+    var me = players[activeUid];
+    var myAct = actions[activeUid];
+    var mySel = (myAct && myAct.round===gameState.round) ? myAct.target : null;
+    var myVote = (myAct && myAct.round===gameState.round) ? myAct.exileVote : null;
+    var speaker = players[gameState.speakerUid];
+
+    var canTargetBride = me.role==="jigit" && gameState.finalNight;
+    var excludeBrideFor = (me.role==="zhenih" || (me.role==="jigit" && !canTargetBride)) ? gameState.brideUid : null;
+
+    var actionLabel = {
+      guest:"Кого подозреваешь? (ни на что не влияет)", jigit:"Кого крадём этой ночью?", zhenih:"Кому бьёшь морду?",
+      byvshaya:"Кого уводишь танцевать?", fotograf:"За кем следит камера?", nevesta:"Кого подозреваешь? (ни на что не влияет)"
+    }[me.role] || "Выбери игрока";
+
+    var body =
+      '<div class="card"><h2>Тост сказал(а) '+esc(speaker?speaker.name:"?")+'</h2>'+
+      '<div class="timerwrap"><div class="timerbar"><div id="tbar" style="width:100%"></div></div><div class="timernum" id="tnum">30</div></div>'+
+      '</div>'+
+      '<div class="card">'+
+      '<h2>'+esc(actionLabel)+'</h2>'+
+      playerGrid({selectable:true, selectedUid:mySel, excludeUid:excludeBrideFor, excludeDead:true}) +
+      '</div>'+
+      '<div class="card">'+
+      '<h2>Изгнать тостующего?</h2>'+
+      '<p class="sub">Решает только мнение мирных гостей — но экран у всех одинаковый.</p>'+
+      '<div class="toggle-row">'+
+        '<div class="toggle on-yes'+(myVote==="exile"?" active":"")+'" data-vote="exile">Изгнать</div>'+
+        '<div class="toggle on-no'+(myVote==="keep"?" active":"")+'" data-vote="keep">Оставить</div>'+
+      '</div>'+
+      '</div>';
+
+    if(activeUid===gameState.brideUid){
+      var me2 = players[activeUid];
+      var used = me2.keyChangesUsed||0;
+      body += '<div class="card"><h2>Управление невесты</h2>';
+      if(used>=2){
+        body += '<p class="sub" style="margin:0">Смены ключа закончились (2 из 2 использованы).</p>';
+      } else if(!keyFormOpen){
+        body += '<button class="btn secondary" id="keyChangeBtn">Сбросить ключ ('+(2-used)+' ост.)</button>';
+      } else {
+        body += '<div class="miniform"><p class="sub">Впиши новые три слова ключа:</p>'+
+          keyInputsHtml()+
+          '<div class="stack" style="margin-top:10px">'+
+          '<button class="btn" id="applyKeyChangeBtn">Применить новый ключ</button>'+
+          '<button class="btn ghost small" id="randKeyBtn2">🎲 Заполнить случайно</button>'+
+          '<button class="btn ghost" id="cancelKeyChangeBtn">Отмена</button>'+
+          '</div></div>';
+      }
+      body += '</div>';
+    }
+
+    if(gameState.testMode){
+      body += '<button class="btn secondary" id="forceResolveBtn">🧪 Завершить угар вручную</button>';
+    }
+
+    render(chrome()+body);
+    bindKeyInputs();
+
+    var chosenTarget = mySel, chosenVote = myVote;
+    root.querySelectorAll("[data-pick]").forEach(function(el){
+      el.onclick = function(){
+        chosenTarget = el.getAttribute("data-pick");
+        submitAction(chosenTarget, chosenVote);
+        screenNight();
+      };
+    });
+    root.querySelectorAll("[data-vote]").forEach(function(el){
+      el.onclick = function(){
+        chosenVote = el.getAttribute("data-vote");
+        submitAction(chosenTarget, chosenVote);
+        screenNight();
+      };
+    });
+    var kcb = document.getElementById("keyChangeBtn");
+    if(kcb) kcb.onclick = function(){ keyFormOpen = true; keyDraft = ["","",""]; screenNight(); };
+    var rk2 = document.getElementById("randKeyBtn2");
+    if(rk2) rk2.onclick = fillRandomKeyInputs;
+    var cancelKcb = document.getElementById("cancelKeyChangeBtn");
+    if(cancelKcb) cancelKcb.onclick = function(){ keyFormOpen = false; keyDraft = ["","",""]; screenNight(); };
+    var applyKcb = document.getElementById("applyKeyChangeBtn");
+    if(applyKcb) applyKcb.onclick = function(){
+      var w1=document.getElementById("kw1").value.trim();
+      var w2=document.getElementById("kw2").value.trim();
+      var w3=document.getElementById("kw3").value.trim();
+      if(!w1||!w2||!w3) return;
+      keyDraft = ["","",""];
+      submitKeyChange([w1,w2,w3]);
+    };
+    var frb = document.getElementById("forceResolveBtn");
+    if(frb) frb.onclick = function(){ clearTimerLoop(); resolveNight(); };
+
+    clearTimerLoop();
+    function tick(){
+      var left = Math.max(0, Math.round((gameState.phaseEndsAt - Date.now())/1000));
+      var tn = document.getElementById("tnum");
+      var tb = document.getElementById("tbar");
+      if(tn) tn.textContent = left;
+      if(tb) tb.style.width = Math.max(0,(left/30*100))+"%";
+      if(left<=0){
+        clearTimerLoop();
+        if(!gameState.testMode) resolveNight();
+      }
+    }
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  function screenCompetition(){
+    var tc = gameState.tieCompetition;
+    var task = normComp(tc.task);
+    var a = players[tc.a], b = players[tc.b];
+    var isBride = activeUid===gameState.brideUid;
+    var body = '<div class="card">'+
+      '<h2>Ничья! Конкурс решает всё</h2>'+
+      '<p class="sub" style="margin-bottom:4px"><b>«'+esc(task.name)+'»</b></p>'+
+      '<p class="sub">'+esc(task.desc)+'</p>'+
+      '<div class="grid">'+
+        '<div class="ptile"><div class="avatar">'+esc(initials(a?a.name:"?"))+'</div><div class="nm">'+esc(a?a.name:"?")+'</div></div>'+
+        '<div class="ptile"><div class="avatar">'+esc(initials(b?b.name:"?"))+'</div><div class="nm">'+esc(b?b.name:"?")+'</div></div>'+
+      '</div>'+
+      '</div>';
+    if(isBride){
+      body += '<div class="card"><h2>Кто проиграл?</h2>'+
+        '<button class="btn secondary" style="margin-bottom:8px" id="loseA">Проиграл(а): '+esc(a?a.name:"?")+'</button>'+
+        '<button class="btn secondary" id="loseB">Проиграл(а): '+esc(b?b.name:"?")+'</button>'+
+        '</div>';
+    } else {
+      body += '<div class="center-note">Ждём решения невесты…</div>';
+    }
+    render(chrome()+body);
+    var la = document.getElementById("loseA"); if(la) la.onclick=function(){resolveCompetition(tc.a)};
+    var lb = document.getElementById("loseB"); if(lb) lb.onclick=function(){resolveCompetition(tc.b)};
+  }
+
+  function screenMorning(){
+    var s = gameState.lastSummary || {};
+    var lines = [];
+    function roleOf(uid){ return players[uid] ? (ROLE_LABEL[players[uid].role]||"?") : "?"; }
+    if(s.brideStolen) lines.push("Невесту похитили прямо из-под венца.");
+    var vanished = [];
+    if(s.stolen) vanished.push(s.stolen);
+    if(s.exiled && vanished.indexOf(s.exiled)===-1) vanished.push(s.exiled);
+    if(!vanished.length && !s.brideStolen) lines.push("Этой ночью со свадьбы никто не пропал.");
+    vanished.forEach(function(uid){
+      lines.push(esc(players[uid]?players[uid].name:"Кто-то")+" этой ночью исчез(ла) со свадьбы и больше не появится — "+esc(roleOf(uid))+".");
+    });
+
+    var body = '<div class="card"><h2>Свадьба очнулась</h2><p class="sub">'+lines.join(" ")+'</p>'+
+      '<div class="pill">Осталось гостей: '+gameState.guestsAliveTotal+' из '+gameState.guestsAliveInitial+'</div>'+
+      '</div>';
+
+    var me = players[activeUid];
+    if(me && me.role==="fotograf" && me.lastPhotoResult && me.lastPhotoResult.round===(gameState.round-1)){
+      var t = players[me.lastPhotoResult.target];
+      body += '<div class="card" style="border-color:var(--gold)"><h2>Только для тебя</h2>'+
+        '<p class="sub">'+esc(t?t.name:"Этот человек")+' этой ночью '+(me.lastPhotoResult.woke?"что-то делал(а) — действовал(а) своей ролью":"не делал(а) никаких активностей")+'.</p></div>';
+    }
+
+    body += '<button class="btn" id="nextBtn">Налить по новой</button>';
+    render(chrome()+body);
+    document.getElementById("nextBtn").onclick = nextRound;
+  }
+
+  function screenEnded(){
+    var win = gameState.winner;
+    var body = '<div class="banner '+(win==="guests"?"win":"lose")+'">'+
+      (win==="guests" ? "Гости победили! Все джигиты изгнаны." : "Джигиты украли невесту и сбежали.")+
+      '</div>';
+
+    body += '<div class="card"><h2>Кто есть кто</h2>';
+    Object.keys(players).forEach(function(uid){
+      var p = players[uid];
+      body += '<div class="lbrow"><span>'+esc(p.name)+'</span><span class="rolebadge">'+esc(ROLE_LABEL[p.role]||"?")+'</span></div>';
+    });
+    body += '</div>';
+
+    var ranked = Object.keys(players).filter(function(u){return players[u].role==="guest"})
+      .sort(function(a,b){ return (players[b].suspicionScore||0)-(players[a].suspicionScore||0); });
+    if(ranked.length){
+      body += '<div class="card"><h2>Самые проницательные гости</h2>'+
+        '<p class="sub">Сколько раз гость верно подозревал живого на тот момент джигита. Ни на что в игре не влияло — чистый Шерлок-Холмс.</p>';
+      ranked.slice(0,5).forEach(function(uid){
+        var p = players[uid];
+        var badge = p.firstCorrectRound===1 ? ' <span class="rolebadge" style="color:var(--good);border-color:var(--good)">вычислил(а) с 1-го раунда!</span>' : '';
+        body += '<div class="lbrow"><span>'+esc(p.name)+badge+'</span><span class="score">'+(p.suspicionScore||0)+'</span></div>';
+      });
+      body += '</div>';
+    }
+
+    var allJigits = gameState.allJigits || [];
+    if(allJigits.length){
+      var totals = gameState.jigitSuspicionTotals || {};
+      body += '<div class="card"><h2>Маскировка джигитов</h2><p class="sub">Сколько раз каждого джигита в сумме верно подозревали за всю игру.</p>';
+      allJigits.forEach(function(uid){
+        var p = players[uid];
+        var total = totals[uid]||0;
+        var note = total===0 ? ' <span class="rolebadge" style="color:var(--gold);border-color:var(--gold)">идеальная маскировка!</span>' : '';
+        body += '<div class="lbrow"><span>'+esc(p?p.name:"?")+note+'</span><span class="score">'+total+'</span></div>';
+      });
+      body += '</div>';
+    }
+
+    body += '<button class="btn gold" id="newGameBtn">🆕 Новая игра</button>';
+    render(chrome()+body);
+    var ngb = document.getElementById("newGameBtn");
+    if(ngb) ngb.onclick = resetGame;
+  }
+
+  function screenSettings(){
+    clearTimerLoop();
+    var cfg = (gameState && gameState.roleConfig) || {};
+    var testOn = !!(gameState && gameState.testMode);
+    var comps = getCompetitions();
+    var locked = !!(gameState && gameState.started);
+
+    var body = '<div class="card">'+
+      '<h2>Настройки</h2>'+
+      '<div class="setting-row">'+
+        '<div><div class="lbl">Тестовый режим</div><div class="sublbl">Играть за всех со своего устройства. Выключи перед настоящей свадьбой.</div></div>'+
+        '<button class="switch'+(testOn?" on":"")+'" id="testModeToggle"></button>'+
+      '</div>'+
+      '</div>';
+
+    var brideOpts = '<option value=""'+(!cfg.brideUid?" selected":"")+'>Случайно</option>'+
+      Object.keys(players).map(function(uid){
+        return '<option value="'+uid+'"'+(cfg.brideUid===uid?" selected":"")+'>'+esc(players[uid].name||uid.slice(0,6))+'</option>';
+      }).join("");
+
+    body += '<div class="card"><h2>Состав ролей</h2>'+
+      (locked ? '<p class="sub">Партия уже идёт — изменения применятся со следующей игры (после сброса).</p>' : '<p class="sub">Невеста участвует всегда. Остальные роли включаются и выключаются вручную, гости добирают оставшиеся места.</p>')+
+      '<div class="setting-row"><div><div class="lbl">Невеста</div><div class="sublbl">Обязательная роль</div></div>'+
+        '<select class="mini" id="cfgBride">'+brideOpts+'</select></div>'+
+      '<div class="setting-row"><div class="lbl">Джигиты</div>'+
+        '<select class="mini" id="cfgJigit">'+
+          '<option value="1"'+(!cfg.jigitCount||cfg.jigitCount==="1"?" selected":"")+'>1 (по умолчанию)</option>'+
+          '<option value="2"'+(cfg.jigitCount==="2"?" selected":"")+'>2</option>'+
+          '<option value="3"'+(cfg.jigitCount==="3"?" selected":"")+'>3</option>'+
+        '</select></div>'+
+      '<div class="setting-row"><div class="lbl">Жених</div>'+
+        '<select class="mini" id="cfgZhenih">'+
+          '<option value="on"'+(!cfg.zhenih||cfg.zhenih==="on"?" selected":"")+'>Вкл.</option>'+
+          '<option value="off"'+(cfg.zhenih==="off"?" selected":"")+'>Выкл.</option>'+
+        '</select></div>'+
+      '<div class="setting-row"><div class="lbl">Фотограф</div>'+
+        '<select class="mini" id="cfgFotograf">'+
+          '<option value="off"'+(!cfg.fotograf||cfg.fotograf==="off"?" selected":"")+'>Выкл.</option>'+
+          '<option value="on"'+(cfg.fotograf==="on"?" selected":"")+'>Вкл.</option>'+
+        '</select></div>'+
+      '<div class="setting-row"><div class="lbl">Бывшая</div>'+
+        '<select class="mini" id="cfgByvshaya">'+
+          '<option value="off"'+(!cfg.byvshaya||cfg.byvshaya==="off"?" selected":"")+'>Выкл.</option>'+
+          '<option value="on"'+(cfg.byvshaya==="on"?" selected":"")+'>Вкл.</option>'+
+        '</select></div>'+
+      '</div>';
+
+    body += '<div class="card"><h2>Ключ</h2>'+
+      '<p class="sub">Невеста задаёт ключ из трёх слов. Мирные видят все три настоящих, джигиты видят тоже три слова на тех же местах, но часть из них — подделка.</p>'+
+      '<div class="setting-row"><div class="lbl">Сколько слов у джигитов настоящие</div>'+
+        '<select class="mini" id="cfgJigitKey">'+
+          '<option value="2"'+(!cfg.jigitKeyWords||cfg.jigitKeyWords==="2"?" selected":"")+'>2 настоящих, 1 подделка</option>'+
+          '<option value="1"'+(cfg.jigitKeyWords==="1"?" selected":"")+'>1 настоящее, 2 подделки</option>'+
+        '</select></div>'+
+      (locked ? '<p class="sub">Применится при следующей смене ключа невестой или новой партии.</p>' : '')+
+      '</div>';
+
+    body += '<div class="card"><h2>Конкурсы при ничьей</h2><p class="sub">Один выбирается случайно, когда голоса «изгнать/оставить» равны (и когда невеста разыгрывает тост).</p>';
+    comps.forEach(function(c, i){
+      var nc = normComp(c);
+      body += '<div class="comp-row"><div class="txt"><b>'+esc(nc.name)+'</b><br>'+esc(nc.desc)+'</div><button class="rm" data-rmcomp="'+i+'">✕</button></div>';
+    });
+    body += '<div style="height:10px"></div>'+
+      '<input type="text" id="newCompName" placeholder="Название конкурса…"/>'+
+      '<div style="height:8px"></div>'+
+      '<input type="text" id="newCompInput" placeholder="Описание конкурса…"/>'+
+      '<div style="height:8px"></div>'+
+      '<button class="btn secondary small" id="addCompBtn">Добавить конкурс</button>'+
+      '</div>';
+
+    body += '<div class="card"><h2>Опасная зона</h2>'+
+      '<p class="sub">Стирает всех игроков, роли и историю партии. Настройки выше сохранятся.</p>'+
+      (resetArmed
+        ? '<button class="btn" style="background:var(--bad)" id="resetConfirmBtn">Да, стереть всё и начать заново</button>'
+        : '<button class="btn secondary" id="resetBtn">Сбросить игру</button>'
+      )+
+      '</div>';
+
+    body += '<button class="btn ghost" data-back="1">← Назад к игре</button>';
+
+    render(topbar()+body);
+
+    var tmt = document.getElementById("testModeToggle");
+    if(tmt) tmt.onclick = function(){ patchGameState({testMode: !testOn}); };
+
+    function saveCfg(patch){
+      var merged = Object.assign({}, cfg, patch);
+      patchGameState({roleConfig: merged});
+    }
+    var cbr = document.getElementById("cfgBride"); if(cbr) cbr.onchange = function(){ saveCfg({brideUid:cbr.value||null}); };
+    var cj = document.getElementById("cfgJigit"); if(cj) cj.onchange = function(){ saveCfg({jigitCount:cj.value}); };
+    var cz = document.getElementById("cfgZhenih"); if(cz) cz.onchange = function(){ saveCfg({zhenih:cz.value}); };
+    var cb = document.getElementById("cfgByvshaya"); if(cb) cb.onchange = function(){ saveCfg({byvshaya:cb.value}); };
+    var cf = document.getElementById("cfgFotograf"); if(cf) cf.onchange = function(){ saveCfg({fotograf:cf.value}); };
+    var ck = document.getElementById("cfgJigitKey"); if(ck) ck.onchange = function(){ saveCfg({jigitKeyWords:ck.value}); };
+
+    root.querySelectorAll("[data-rmcomp]").forEach(function(el){
+      el.onclick = function(){
+        var idx = parseInt(el.getAttribute("data-rmcomp"), 10);
+        var next = comps.slice(); next.splice(idx,1);
+        patchGameState({competitionsList: next});
+      };
+    });
+    var addCompBtn = document.getElementById("addCompBtn");
+    if(addCompBtn) addCompBtn.onclick = function(){
+      var vName = document.getElementById("newCompName").value.trim();
+      var vDesc = document.getElementById("newCompInput").value.trim();
+      if(!vDesc) return;
+      patchGameState({competitionsList: comps.concat([{name: vName||"Конкурс", desc: vDesc}])});
+    };
+
+    var rb = document.getElementById("resetBtn");
+    if(rb) rb.onclick = function(){ resetArmed = true; screenSettings(); };
+    var rcb = document.getElementById("resetConfirmBtn");
+    if(rcb) rcb.onclick = resetGame;
+  }
+
+  function screenInfo(){
+    clearTimerLoop();
+    var body = '<div class="card"><h2>Цель игры</h2>'+
+      '<p class="sub">Джигиты хотят украсть невесту. Пока жив хоть один обычный гость, красть можно только гостей — невеста становится доступной целью, только когда обычных гостей не осталось: следующая ночь решающая. Мирные побеждают, изгнав всех джигитов голосованием.</p></div>';
+
+    body += '<div class="card"><h2>Роли</h2>';
+    Object.keys(ROLE_LABEL).forEach(function(r){
+      body += '<div style="margin-bottom:12px"><div class="rolebadge" style="margin-bottom:4px">'+esc(ROLE_LABEL[r])+'</div>'+
+        '<p class="sub" style="margin:0">'+esc(ROLE_DESC[r])+'</p></div>';
+    });
+    body += '</div>';
+
+    body += '<div class="card"><h2>Порядок действий за ночь</h2>'+
+      '<ol class="order-list">'+
+      '<li><b>Бывшая</b> и <b>жених</b> одновременно выбирают, кого заблокировать (увести танцевать / набить морду) — заблокированный не сможет этой ночью совершить своё действие. Если они выбрали друг друга взаимно — оба блока аннулируются, как будто никто никого не блокировал.</li>'+
+      '<li><b>Джигит</b> (главный) выбирает, кого украсть — если он заблокирован (бывшей или женихом), кражи не будет.</li>'+
+      '<li><b>Фотограф</b> проверяет, действовал ли выбранный им человек этой ночью — узнаёт об этом только сам, утром. Если заблокирован он сам — ничего не узнает.</li>'+
+      '<li><b>Невеста</b> может сменить общий ключ (не более двух раз за игру) — действует независимо от остальных.</li>'+
+      '<li>Параллельно с этим <b>гости</b> голосуют, изгонять ли того, кто говорил тост.</li>'+
+      '</ol></div>';
+
+    body += '<div class="card"><h2>Спорные случаи</h2><ul class="rules-list">'+
+      '<li>Если тостующего этой же ночью и украли, и изгнали голосованием — это один и тот же человек, он просто один раз выбывает.</li>'+
+      '<li>Утром никогда не говорится, украли человека или изгнали голосованием — он просто «исчезает со свадьбы», а его роль раскрывается. Как именно он выбыл, остаётся загадкой.</li>'+
+      '<li>Если бывшая и жених выбрали друг друга взаимно (увела его танцевать, а он в ответ полез драться) — оба блока взаимно аннулируются, как будто этой ночью они оба просто разбирались между собой и никого больше не трогали.</li>'+
+      '<li>Если бывшая заблокировала жениха (а он её — нет), его попытка набить морду не засчитывается, и его цель спокойно действует. Если жених заблокировал бывшую (а она его — нет), её цель тоже освобождается.</li>'+
+      '<li>Если голоса «изгнать» и «оставить» равны — вместо решения устраивается конкурс между тостующим и случайным живым гостем; кто проиграл в реальности, решает невеста, нажав на его имя.</li>'+
+      '<li>Если выбывает главный джигит, а другие (их может быть до трёх) ещё живы — со следующей ночи главным становится следующий по очереди.</li>'+
+      '<li>Жених не может тронуть невесту ни при каких условиях.</li>'+
+      '<li>Джигит может выбрать невесту целью, только когда счётчик живых обычных гостей равен нулю.</li>'+
+      '<li>Кто говорит следующий тост, решает невеста — сама или разыгрывая конкурс из списка: кто в нём проиграл, тот и говорит тост (это не связано с конкурсом при ничьей на голосовании).</li>'+
+      '<li>Нельзя по приколу подговариваться и подсуживать, чтобы в конкурс специально попал конкретный человек (например, Денис) — выбор и исход конкурса должны быть честными.</li>'+
+      '</ul></div>';
+
+    var comps = getCompetitions();
+    body += '<div class="card"><h2>Конкурсы при ничьей</h2><ul class="rules-list">'+
+      comps.map(function(c){ var nc=normComp(c); return '<li><b>'+esc(nc.name)+'</b> — '+esc(nc.desc)+'</li>'; }).join("")+
+      '</ul></div>';
+
+    body += '<button class="btn ghost" data-back="1">← Назад к игре</button>';
+    render(topbar()+body);
+  }
+
+  function screenEliminated(){
+    var body = '<div class="card"><h2>Ты выбыл(а) из игры</h2>'+
+      '<p class="sub">Свадьба продолжается без тебя — активных действий и голосований для тебя больше нет. Можешь заглянуть в лог игры, чтобы узнать, что происходило по раундам.</p>'+
+      '</div>'+
+      '<button class="btn secondary" id="openLogBtn">📜 Открыть лог игры</button>';
+    render(chrome()+body);
+    var olb = document.getElementById("openLogBtn");
+    if(olb) olb.onclick = function(){ navOverride="log"; renderCurrent(); };
+  }
+
+  function draw(){
+    clearTimerLoop();
+    if(!myUid) return;
+    var me = players[activeUid];
+    if(!gameState || !gameState.started){
+      screenLobby();
+      return;
+    }
+    if(!me){
+      // joined room after game started -> treat as spectator prompt
+      render(chrome()+'<div class="card"><h2>Свадьба уже началась</h2><p class="sub">Дождись следующей партии, либо попроси хозяина начать заново.</p></div>');
+      return;
+    }
+    var activePhases = ["toast","night","pickspeaker","competition"];
+    if(!me.alive && activePhases.indexOf(gameState.phase)!==-1){
+      screenEliminated();
+      return;
+    }
+    switch(gameState.phase){
+      case "keysetup": screenKeySetup(); break;
+      case "pickspeaker": screenPickSpeaker(); break;
+      case "toast": screenToast(); break;
+      case "night": screenNight(); break;
+      case "competition": screenCompetition(); break;
+      case "morning": screenMorning(); break;
+      case "ended": screenEnded(); break;
+      default: screenLobby();
+    }
+  }
+
+  centerMsg("Наливаем…");
+  boot();
+})();
+</script>
