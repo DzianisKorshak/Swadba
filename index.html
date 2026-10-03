@@ -524,10 +524,9 @@
       if(role==="byvshaya") byvshayaUid = uid;
       if(role==="fotograf") fotografUid = uid;
       if(role==="jigit") jigits.push(uid);
-      writes.push(db.doc("players/"+uid).update({
-        role: role, alive: true, key: null, suspicionScore: 0,
-        keyChangesUsed: role==="nevesta" ? 0 : undefined
-      }).catch(function(){}));
+      var updObj = { role: role, alive: true, key: null, suspicionScore: 0 };
+      if(role==="nevesta") updObj.keyChangesUsed = 0;
+      writes.push(db.doc("players/"+uid).update(updObj).catch(function(){}));
     }
     await Promise.all(writes);
 
